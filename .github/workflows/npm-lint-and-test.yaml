@@ -69,7 +69,7 @@ jobs:
         run: npm ci
 
       - name: Test
-        id: npm test
+        id: npm-test
         run: npm run test
 
   test-action:
