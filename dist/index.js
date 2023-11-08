@@ -25698,21 +25698,27 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.run = void 0;
 const core = __importStar(__nccwpck_require__(2186));
+const fs_1 = __importDefault(__nccwpck_require__(7147));
 /**
  * Main function for updating provisioned Product on AWS Service Catalog.
  * @returns {Promise<void>} Resolves when the action is complete.
  */
 async function run() {
     try {
-        const region = core.getInput('aws-region');
+        const provisionedProductRegion = core.getInput('provisioned-product-region');
         const provisionedProductId = core.getInput('provisioned-product-id');
-        // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
-        core.debug(`Updating ${provisionedProductId} in region ${region}`);
+        const provisionedParametersJson = core.getInput('provisioned-parameters-json');
+        const _ = JSON.parse(fs_1.default.readFileSync(provisionedParametersJson, 'utf8'));
+        core.info(`Updating ${provisionedProductId} in region ${provisionedProductRegion}`);
         // Set outputs for other workflow steps to use
-        core.setOutput('version', 'cd99d16');
+        core.setOutput('status', 'SUCCEEDED');
+        core.setOutput('errors', '');
     }
     catch (error) {
         // Fail the workflow run if an error occurs

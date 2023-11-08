@@ -1,4 +1,6 @@
 import * as core from '@actions/core'
+import fs from 'fs'
+import { ProvisionedParameters } from './params'
 
 /**
  * Main function for updating provisioned Product on AWS Service Catalog.
@@ -6,14 +8,25 @@ import * as core from '@actions/core'
  */
 export async function run(): Promise<void> {
   try {
-    const region: string = core.getInput('aws-region')
+    const provisionedProductRegion: string = core.getInput(
+      'provisioned-product-region'
+    )
     const provisionedProductId: string = core.getInput('provisioned-product-id')
+    const provisionedParametersJson: string = core.getInput(
+      'provisioned-parameters-json'
+    )
 
-    // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
-    core.debug(`Updating ${provisionedProductId} in region ${region}`)
+    const _ = JSON.parse(
+      fs.readFileSync(provisionedParametersJson, 'utf8')
+    ) as ProvisionedParameters
+
+    core.info(
+      `Updating ${provisionedProductId} in region ${provisionedProductRegion}`
+    )
 
     // Set outputs for other workflow steps to use
-    core.setOutput('version', 'cd99d16')
+    core.setOutput('status', 'SUCCEEDED')
+    core.setOutput('errors', '')
   } catch (error) {
     // Fail the workflow run if an error occurs
     if (error instanceof Error) core.setFailed(error.message)

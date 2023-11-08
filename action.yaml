@@ -1,20 +1,24 @@
 name: 'aws-catalog-update-product-action'
-description: 'Update provisisoned Products on AWS Service Catalog'
+description: 'Update parameters of Provisisoned Product in AWS Service Catalog'
 author: 'm-jonn'
 
-# Define your inputs here.
 inputs:
-  aws-region:
-    description: 'AWS Region Code for the provisioned Product'
+  provisioned-product-region:
+    description: 'AWS Region of the provisioned product in AWS Service Catalog'
     required: true
   provisioned-product-id:
-    description: 'Id of the provisioned Product in AWS Service Catalog'
+    description: 'Id of the provisioned product in AWS Service Catalog'
     required: true
+  provisioned-parameters-json:
+    description: 'Relative path to json file containing the parameters of the provisioned product in AWS Service Catalog'
+    required: false
+    default: 'aws-provisioned-parameters.json'
 
-# Define your outputs here.
 outputs:
-  version:
-    description: 'Version of the provisioned Product'
+  status:
+    description: 'Status of the provisioned Product'
+  errors:
+    description: 'Error records that occurred during provisioning'
 
 runs:
   using: node20
