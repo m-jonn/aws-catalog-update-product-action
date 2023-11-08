@@ -2,22 +2,19 @@ name: 'aws-catalog-update-product-action'
 description: 'Update provisisoned Products on AWS Service Catalog'
 author: 'm-jonn'
 
-# Add your action's branding here. This will appear on the GitHub Marketplace.
-branding:
-  icon: 'heart'
-  color: 'red'
-
 # Define your inputs here.
 inputs:
-  milliseconds:
-    description: 'Your input description here'
+  aws-region:
+    description: 'AWS Region Code for the provisioned Product'
     required: true
-    default: '1000'
+  provisioned-product-id:
+    description: 'Id of the provisioned Product in AWS Service Catalog'
+    required: true
 
 # Define your outputs here.
 outputs:
-  time:
-    description: 'Your output description here'
+  version:
+    description: 'Version of the provisioned Product'
 
 runs:
   using: node20
