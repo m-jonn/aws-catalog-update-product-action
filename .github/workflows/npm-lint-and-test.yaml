@@ -88,6 +88,7 @@ jobs:
         with:
           provisioned-product-region: eu-central-1
           provisioned-product-id: pp-jgpl6jy6aq2lu
+          provisioned-parameters-json: '__tests__/aws-provisioned-product.json'
 
       - name: Print Output
         id: output
