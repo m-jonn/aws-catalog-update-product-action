@@ -1,6 +1,6 @@
 [
   {
-    "Name": "TrustedCidrs",
+    "Key": "TrustedCidrs",
     "Value": "128.4.2.0/28, 89.4.2.0/28, 88.4.2.0/28"
   }
 ]

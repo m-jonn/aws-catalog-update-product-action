@@ -1,5 +1,6 @@
 import * as core from '@actions/core'
 import * as sdk from '@aws-sdk/client-service-catalog'
+import { ProvisionedParameters } from './params'
 
 // https://docs.aws.amazon.com/servicecatalog/latest/dg/API_ProvisionedProductDetail.html
 export class CatalogProvisionedProduct {
@@ -8,7 +9,7 @@ export class CatalogProvisionedProduct {
     public region: string,
     public detail: sdk.ProvisionedProductDetail,
     public artifact: sdk.ProvisioningArtifactDetail,
-    public parameters: sdk.ProvisioningArtifactParameter[]
+    public parameters: ProvisionedParameters
   ) {}
 
   static async lookup(
@@ -39,13 +40,13 @@ export class CatalogProvisionedProduct {
         '--include-provisioning-artifact-parameters'
     )
 
-    const paResponse = (await client.send(
+    const paResponse = await client.send(
       new sdk.DescribeProvisioningArtifactCommand({
         ProvisioningArtifactId: detail.ProvisioningArtifactId,
         ProductId: detail.ProductId,
         IncludeProvisioningArtifactParameters: true
       })
-    )) as sdk.DescribeProvisioningArtifactOutput
+    )
 
     const artifact = paResponse[
       'ProvisioningArtifactDetail'
@@ -55,12 +56,44 @@ export class CatalogProvisionedProduct {
       'ProvisioningArtifactParameters'
     ] as sdk.ProvisioningArtifactParameter[]
 
+    const provisionedParameters: ProvisionedParameters = []
+    for (const parameter of parameters) {
+      provisionedParameters.push({
+        Key: parameter.ParameterKey ?? '',
+        Value: '',
+        UsePreviousValue: true
+      })
+    }
+
     return new CatalogProvisionedProduct(
       client,
       region,
       detail,
       artifact,
-      parameters
+      provisionedParameters
     )
   }
+
+  // async update(toBeParameters: ProvisionedParameters) {
+  //   const updateToken = (() => {
+  //     const charSet = 'abcdefghijklmnopqrstuvwxyz0123456789'
+  //     var random = ''
+  //     for (var i = 0; i < 12; i++) {
+  //       var r = Math.floor(Math.random() * charSet.length)
+  //       random += charSet.substring(r, r + 1)
+  //     }
+  //     return random
+  //   })()
+
+  //   const command = new sdk.UpdateProvisionedProductCommand({
+  //     ProvisionedProductId: this.detail.Id,
+  //     ProductId: this.detail.ProductId,
+  //     ProvisioningParameters:
+  //       toBeParameters as sdk.UpdateProvisioningParameter[],
+  //     ProvisioningArtifactId: this.detail.ProvisioningArtifactId,
+  //     UpdateToken: updateToken
+  //   })
+  //   const response = await this.client.send(command)
+  //   const record = response['RecordDetail']
+  // }
 }

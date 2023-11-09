@@ -1,8 +1,6 @@
 import * as core from '@actions/core'
-import fs from 'fs'
 import { CatalogProvisionedProduct } from './catalog'
-import { ProvisionedParameters } from './params'
-import { compileToBeParameters } from './compile'
+import { loadParametersFromFile, compileToBeParameters } from './params'
 
 /**
  * Main function for updating provisioned Product on AWS Service Catalog.
@@ -29,11 +27,11 @@ export async function run(): Promise<void> {
     )
 
     // 2.) Compile Parameters
-    const expectedParameters = JSON.parse(
-      fs.readFileSync(provisionedParametersJson, 'utf8')
-    ) as ProvisionedParameters
-
-    const _ = compileToBeParameters(expectedParameters, provisionedProduct)
+    const expectedParameters = loadParametersFromFile(provisionedParametersJson)
+    const _ = compileToBeParameters(
+      expectedParameters,
+      provisionedProduct.parameters
+    )
 
     // 3.) Apply Parameters
 
