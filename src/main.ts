@@ -1,6 +1,8 @@
 import * as core from '@actions/core'
 import fs from 'fs'
+import { CatalogProvisionedProduct } from './catalog'
 import { ProvisionedParameters } from './params'
+import { compileToBeParameters } from './compile'
 
 /**
  * Main function for updating provisioned Product on AWS Service Catalog.
@@ -16,13 +18,24 @@ export async function run(): Promise<void> {
       'provisioned-parameters-json'
     )
 
-    const _ = JSON.parse(
+    // 1.) Query Details
+    const provisionedProduct = await CatalogProvisionedProduct.lookup(
+      provisionedProductRegion,
+      provisionedProductId
+    )
+
+    core.info(
+      `Updating ${provisionedProduct.detail.Id} with artifact ${provisionedProduct.artifact.Name} in region ${provisionedProductRegion}`
+    )
+
+    // 2.) Compile Parameters
+    const expectedParameters = JSON.parse(
       fs.readFileSync(provisionedParametersJson, 'utf8')
     ) as ProvisionedParameters
 
-    core.info(
-      `Updating ${provisionedProductId} in region ${provisionedProductRegion}`
-    )
+    const _ = compileToBeParameters(expectedParameters, provisionedProduct)
+
+    // 3.) Apply Parameters
 
     // Set outputs for other workflow steps to use
     core.setOutput('status', 'SUCCEEDED')
