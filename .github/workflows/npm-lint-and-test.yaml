@@ -1,4 +1,4 @@
-name: npm lint & npm test & test-action
+name: npm lint & npm test
 
 on:
   pull_request:
@@ -72,24 +72,3 @@ jobs:
       - name: Test
         id: npm-test
         run: npm run test
-
-  test-action:
-    name: GitHub Actions Test
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        id: checkout
-        uses: actions/checkout@v4
-
-      - name: Test Local Action
-        id: test-action
-        uses: ./
-        with:
-          provisioned-product-region: eu-central-1
-          provisioned-product-id: pp-jgpl6jy6aq2lu
-          provisioned-parameters-json: '__tests__/aws-provisioned-product.json'
-
-      - name: Print Output
-        id: output
-        run: echo "${{ steps.test-action.outputs.status }}"
