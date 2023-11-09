@@ -38,7 +38,7 @@ const describeProvisionedProductCommandOutput = `
     "Id": "${provisionedProductId}",
     "Status": "AVAILABLE",
     "CreatedTime": "2023-10-11T09:31:17.607000+00:00",
-    "IdempotencyToken": "631f3884-a80e-4e3e-9121-ed961c4f71a8",
+    "IdempotencyToken": "631...1a8",
     "LastRecordId": "rec-3oqhe4kjejn4q",
     "LastProvisioningRecordId": "rec-3oqhe4kjejn4q",
     "LastSuccessfulProvisioningRecordId": "rec-3oqhe4kjejn4q",
