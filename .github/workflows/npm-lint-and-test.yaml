@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   lint:
-    name: Lint Code Base
+    name: npm lint & super-linter
     runs-on: ubuntu-latest
 
     steps:
@@ -50,7 +50,7 @@ jobs:
           VALIDATE_NATURAL_LANGUAGE: false
 
   test:
-    name: npm lint & npm test
+    name: npm test
     runs-on: ubuntu-latest
 
     steps:
