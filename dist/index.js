@@ -63321,6 +63321,35 @@ class CatalogProvisionedProduct {
         }
         return new CatalogProvisionedProduct(client, region, detail, artifact, provisionedParameters);
     }
+    async update(toBeParameters) {
+        const updateToken = (() => {
+            const charSet = 'abcdefghijklmnopqrstuvwxyz0123456789';
+            let random = '';
+            for (let i = 0; i < 12; i++) {
+                const r = Math.floor(Math.random() * charSet.length);
+                random += charSet.substring(r, r + 1);
+            }
+            return random;
+        })();
+        let parametersDebugString = '';
+        for (const parameter of toBeParameters) {
+            parametersDebugString += `Key=${parameter.Key},Value=${parameter.Value},UsePreviousValue=${parameter.UsePreviousValue ? 'true' : 'false'} `;
+        }
+        core.debug(`aws --region ${this.region} servicecatalog update-provisioned-product ` +
+            `--id ${this.detail.Id} ` +
+            `--product-id ${this.detail.ProductId}` +
+            `--provisioning-parameters ${parametersDebugString}`);
+        const command = new sdk.UpdateProvisionedProductCommand({
+            ProvisionedProductId: this.detail.Id,
+            ProductId: this.detail.ProductId,
+            ProvisioningParameters: toBeParameters,
+            ProvisioningArtifactId: this.detail.ProvisioningArtifactId,
+            UpdateToken: updateToken
+        });
+        const response = await this.client.send(command);
+        //const recordId = response['RecordDetail']?['RecordId'] : -1
+        return response.RecordDetail?.Status ?? 'unknown';
+    }
 }
 exports.CatalogProvisionedProduct = CatalogProvisionedProduct;
 
@@ -63374,14 +63403,16 @@ async function run() {
         core.info(`Updating ${provisionedProduct.detail.Id} with artifact ${provisionedProduct.artifact.Name} in region ${provisionedProductRegion}`);
         // 2.) Compile Parameters
         const expectedParameters = (0, params_1.loadParametersFromFile)(provisionedParametersJson);
-        const _ = (0, params_1.compileToBeParameters)(expectedParameters, provisionedProduct.parameters);
+        const toBeParameters = (0, params_1.compileToBeParameters)(expectedParameters, provisionedProduct.parameters);
         // 3.) Apply Parameters
+        const status = await provisionedProduct.update(toBeParameters);
         // Set outputs for other workflow steps to use
-        core.setOutput('status', 'SUCCEEDED');
+        core.setOutput('status', status);
         core.setOutput('errors', '');
     }
     catch (error) {
         // Fail the workflow run if an error occurs
+        console.log(error);
         if (error instanceof Error)
             core.setFailed(error.message);
     }
@@ -63400,20 +63431,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.compileToBeParameters = exports.loadParametersFromFile = exports.ProvisionedParameter = void 0;
+exports.compileToBeParameters = exports.loadParametersFromFile = void 0;
 const fs_1 = __importDefault(__nccwpck_require__(57147));
 const ajv_1 = __importDefault(__nccwpck_require__(72426));
-class ProvisionedParameter {
-    Key;
-    Value;
-    UsePreviousValue;
-    constructor(Key, Value = '', UsePreviousValue = true) {
-        this.Key = Key;
-        this.Value = Value;
-        this.UsePreviousValue = UsePreviousValue;
-    }
-}
-exports.ProvisionedParameter = ProvisionedParameter;
 function loadParametersFromFile(provisionedParametersJson) {
     const schema = {
         type: 'array',
@@ -63430,10 +63450,18 @@ function loadParametersFromFile(provisionedParametersJson) {
     };
     const ajv = new ajv_1.default();
     const validate = ajv.compile(schema);
-    const expectedParameters = JSON.parse(fs_1.default.readFileSync(provisionedParametersJson, 'utf8')) ?? [];
-    const valid = validate(expectedParameters);
+    const expectedParametersFromFile = JSON.parse(fs_1.default.readFileSync(provisionedParametersJson, 'utf8')) ?? [];
+    const valid = validate(expectedParametersFromFile);
     if (!valid) {
         throw new Error(`${provisionedParametersJson} is invalid: ${ajv.errorsText(validate.errors)}`);
+    }
+    const expectedParameters = [];
+    for (const param of expectedParametersFromFile) {
+        expectedParameters.push({
+            Key: param.Key,
+            Value: param.Value ?? '',
+            UsePreviousValue: param.UsePreviousValue ?? false
+        });
     }
     return expectedParameters;
 }

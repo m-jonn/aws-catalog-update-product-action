@@ -89,6 +89,32 @@ const describeProvisioningArtifactCommandOutput = `
   ]
 }
 `
+const updateProvisioningArtifactCommandOutput = `
+{
+  "$metadata": {
+    "httpStatusCode": 200,
+    "requestId": "8f2fc573-88d8-4463-8d10-b9131c0e1e44",
+    "attempts": 1,
+    "totalRetryDelay": 0
+  },
+  "RecordDetail": {
+    "CreatedTime": "2023-11-10T16:23:24.426Z",
+    "LaunchRoleArn": "arn:aws:iam::666666666666:role/ProvisionRole",
+    "PathId": "lpv3-6jfab7htanjn4",
+    "ProductId": "prod-c4kv34nyxdcxi",
+    "ProvisionedProductId": "pp-gorzzxgtuhkrq",
+    "ProvisionedProductName": "SampleProduct",
+    "ProvisionedProductType": "CFN_STACK",
+    "ProvisioningArtifactId": "pa-cskogrciwcbjs",
+    "RecordErrors": [],
+    "RecordId": "rec-5jxa4cwfqkoti",
+    "RecordTags": [],
+    "RecordType": "UPDATE_PROVISIONED_PRODUCT",
+    "Status": "CREATED",
+    "UpdatedTime": "2023-11-10T16:23:24.437Z"
+  }
+}
+`
 
 function setupMocks(): void {
   // Set the action's inputs as return values from core.getInput()
@@ -112,6 +138,10 @@ function setupMocks(): void {
   serviceCatalogMock
     .on(sdk.DescribeProvisioningArtifactCommand)
     .resolves(JSON.parse(describeProvisioningArtifactCommandOutput))
+
+  serviceCatalogMock
+    .on(sdk.UpdateProvisionedProductCommand)
+    .resolves(JSON.parse(updateProvisioningArtifactCommandOutput))
 }
 
 describe('action', () => {
@@ -141,7 +171,7 @@ describe('action', () => {
     expect(setOutputMock).toHaveBeenNthCalledWith(
       1,
       'status',
-      expect.stringMatching('SUCCEEDED')
+      expect.stringMatching('CREATED')
     )
     expect(errorMock).not.toHaveBeenCalled()
   })

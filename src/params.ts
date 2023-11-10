@@ -1,12 +1,10 @@
 import fs from 'fs'
 import Ajv from 'ajv'
 
-export class ProvisionedParameter {
-  constructor(
-    public Key: string,
-    public Value = '',
-    public UsePreviousValue = true
-  ) {}
+export interface ProvisionedParameter {
+  Key: string
+  Value: string
+  UsePreviousValue: boolean
 }
 
 export type ProvisionedParameters = ProvisionedParameter[]
@@ -30,9 +28,9 @@ export function loadParametersFromFile(
   const ajv = new Ajv()
   const validate = ajv.compile(schema)
 
-  const expectedParameters =
+  const expectedParametersFromFile =
     JSON.parse(fs.readFileSync(provisionedParametersJson, 'utf8')) ?? []
-  const valid = validate(expectedParameters)
+  const valid = validate(expectedParametersFromFile)
   if (!valid) {
     throw new Error(
       `${provisionedParametersJson} is invalid: ${ajv.errorsText(
@@ -41,7 +39,16 @@ export function loadParametersFromFile(
     )
   }
 
-  return expectedParameters as ProvisionedParameters
+  const expectedParameters: ProvisionedParameters = []
+  for (const param of expectedParametersFromFile as ProvisionedParameter[]) {
+    expectedParameters.push({
+      Key: param.Key,
+      Value: param.Value ?? '',
+      UsePreviousValue: param.UsePreviousValue ?? false
+    })
+  }
+
+  return expectedParameters
 }
 
 export function compileToBeParameters(

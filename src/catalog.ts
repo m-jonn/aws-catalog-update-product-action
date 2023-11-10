@@ -74,26 +74,40 @@ export class CatalogProvisionedProduct {
     )
   }
 
-  // async update(toBeParameters: ProvisionedParameters) {
-  //   const updateToken = (() => {
-  //     const charSet = 'abcdefghijklmnopqrstuvwxyz0123456789'
-  //     var random = ''
-  //     for (var i = 0; i < 12; i++) {
-  //       var r = Math.floor(Math.random() * charSet.length)
-  //       random += charSet.substring(r, r + 1)
-  //     }
-  //     return random
-  //   })()
+  async update(toBeParameters: ProvisionedParameters): Promise<string> {
+    const updateToken = (() => {
+      const charSet = 'abcdefghijklmnopqrstuvwxyz0123456789'
+      let random = ''
+      for (let i = 0; i < 12; i++) {
+        const r = Math.floor(Math.random() * charSet.length)
+        random += charSet.substring(r, r + 1)
+      }
+      return random
+    })()
 
-  //   const command = new sdk.UpdateProvisionedProductCommand({
-  //     ProvisionedProductId: this.detail.Id,
-  //     ProductId: this.detail.ProductId,
-  //     ProvisioningParameters:
-  //       toBeParameters as sdk.UpdateProvisioningParameter[],
-  //     ProvisioningArtifactId: this.detail.ProvisioningArtifactId,
-  //     UpdateToken: updateToken
-  //   })
-  //   const response = await this.client.send(command)
-  //   const record = response['RecordDetail']
-  // }
+    let parametersDebugString = ''
+    for (const parameter of toBeParameters) {
+      parametersDebugString += `Key=${parameter.Key},Value=${
+        parameter.Value
+      },UsePreviousValue=${parameter.UsePreviousValue ? 'true' : 'false'} `
+    }
+
+    core.debug(
+      `aws --region ${this.region} servicecatalog update-provisioned-product ` +
+        `--id ${this.detail.Id} ` +
+        `--product-id ${this.detail.ProductId}` +
+        `--provisioning-parameters ${parametersDebugString}`
+    )
+    const command = new sdk.UpdateProvisionedProductCommand({
+      ProvisionedProductId: this.detail.Id,
+      ProductId: this.detail.ProductId,
+      ProvisioningParameters:
+        toBeParameters as sdk.UpdateProvisioningParameter[],
+      ProvisioningArtifactId: this.detail.ProvisioningArtifactId,
+      UpdateToken: updateToken
+    })
+    const response = await this.client.send(command)
+    //const recordId = response['RecordDetail']?['RecordId'] : -1
+    return response.RecordDetail?.Status ?? 'unknown'
+  }
 }

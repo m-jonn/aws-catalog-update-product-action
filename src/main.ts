@@ -28,18 +28,20 @@ export async function run(): Promise<void> {
 
     // 2.) Compile Parameters
     const expectedParameters = loadParametersFromFile(provisionedParametersJson)
-    const _ = compileToBeParameters(
+    const toBeParameters = compileToBeParameters(
       expectedParameters,
       provisionedProduct.parameters
     )
 
     // 3.) Apply Parameters
+    const status = await provisionedProduct.update(toBeParameters)
 
     // Set outputs for other workflow steps to use
-    core.setOutput('status', 'SUCCEEDED')
+    core.setOutput('status', status)
     core.setOutput('errors', '')
   } catch (error) {
     // Fail the workflow run if an error occurs
+    console.log(error)
     if (error instanceof Error) core.setFailed(error.message)
   }
 }
