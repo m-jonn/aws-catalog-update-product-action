@@ -63337,18 +63337,54 @@ class CatalogProvisionedProduct {
         }
         core.debug(`aws --region ${this.region} servicecatalog update-provisioned-product ` +
             `--id ${this.detail.Id} ` +
-            `--product-id ${this.detail.ProductId}` +
+            `--product-id ${this.detail.ProductId} ` +
             `--provisioning-parameters ${parametersDebugString}`);
-        const command = new sdk.UpdateProvisionedProductCommand({
+        const update = await this.client.send(new sdk.UpdateProvisionedProductCommand({
             ProvisionedProductId: this.detail.Id,
             ProductId: this.detail.ProductId,
             ProvisioningParameters: toBeParameters,
             ProvisioningArtifactId: this.detail.ProvisioningArtifactId,
             UpdateToken: updateToken
-        });
-        const response = await this.client.send(command);
-        //const recordId = response['RecordDetail']?['RecordId'] : -1
-        return response.RecordDetail?.Status ?? 'unknown';
+        }));
+        const recordId = update.RecordDetail?.RecordId ?? 'Unknown';
+        if (recordId === 'Unknown') {
+            throw new Error('Unable to follow status, no record id returned');
+        }
+        // Max runtime for cloudformation stacks is ~ 1 hour,
+        // so lets use this as max timeout value and
+        // lets wait 10 sec before the next status request
+        const waitdelay = 10000;
+        const maxWait = 360000;
+        const queryStatus = async () => {
+            core.debug(`aws --region ${this.region} servicecatalog describe-record --id ${recordId} `);
+            const record = await this.client.send(new sdk.DescribeRecordCommand({ Id: recordId }));
+            const status = record.RecordDetail?.Status ?? sdk.RecordStatus.IN_PROGRESS;
+            if (record.RecordDetail?.RecordErrors) {
+                let message = '';
+                for (const error of record.RecordDetail.RecordErrors) {
+                    message += `${error.Code} ${error.Description}\n`;
+                }
+                if (status === sdk.RecordStatus.FAILED)
+                    core.error(message);
+                else
+                    core.info(message);
+            }
+            return status;
+        };
+        let currentWait = 0;
+        let status = await queryStatus();
+        while ((status === sdk.RecordStatus.IN_PROGRESS_IN_ERROR ||
+            status === sdk.RecordStatus.IN_PROGRESS ||
+            status === sdk.RecordStatus.CREATED) &&
+            currentWait < maxWait) {
+            await new Promise(resolve => setTimeout(resolve, waitdelay));
+            currentWait += waitdelay;
+            status = await queryStatus();
+        }
+        if (status === sdk.RecordStatus.FAILED) {
+            core.setFailed('Provisioning of parameters failed');
+        }
+        return status;
     }
 }
 exports.CatalogProvisionedProduct = CatalogProvisionedProduct;
@@ -63408,11 +63444,9 @@ async function run() {
         const status = await provisionedProduct.update(toBeParameters);
         // Set outputs for other workflow steps to use
         core.setOutput('status', status);
-        core.setOutput('errors', '');
     }
     catch (error) {
         // Fail the workflow run if an error occurs
-        console.log(error);
         if (error instanceof Error)
             core.setFailed(error.message);
     }

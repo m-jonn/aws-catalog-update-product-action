@@ -116,6 +116,28 @@ const updateProvisioningArtifactCommandOutput = `
 }
 `
 
+const describeRecordCommandOutput = `
+{ 
+  "RecordDetail": {
+    "CreatedTime": "2023-11-10T16:23:24.426Z",
+    "LaunchRoleArn": "arn:aws:iam::666666666666:role/ProvisionRole",
+    "PathId": "lpv3-6jfab7htanjn4",
+    "ProductId": "prod-c4kv34nyxdcxi",
+    "ProvisionedProductId": "pp-gorzzxgtuhkrq",
+    "ProvisionedProductName": "SampleProduct",
+    "ProvisionedProductType": "CFN_STACK",
+    "ProvisioningArtifactId": "pa-cskogrciwcbjs",
+    "RecordErrors": [],
+    "RecordId": "rec-5jxa4cwfqkoti",
+    "RecordTags": [],
+    "RecordType": "UPDATE_PROVISIONED_PRODUCT",
+    "Status": "SUCCEEDED",
+    "UpdatedTime": "2023-11-10T16:23:24.437Z"
+  },
+  "RecordOutputs": []
+}
+`
+
 function setupMocks(): void {
   // Set the action's inputs as return values from core.getInput()
   getInputMock.mockImplementation((name: string): string => {
@@ -142,6 +164,10 @@ function setupMocks(): void {
   serviceCatalogMock
     .on(sdk.UpdateProvisionedProductCommand)
     .resolves(JSON.parse(updateProvisioningArtifactCommandOutput))
+
+  serviceCatalogMock
+    .on(sdk.DescribeRecordCommand)
+    .resolves(JSON.parse(describeRecordCommandOutput))
 }
 
 describe('action', () => {
@@ -171,7 +197,7 @@ describe('action', () => {
     expect(setOutputMock).toHaveBeenNthCalledWith(
       1,
       'status',
-      expect.stringMatching('CREATED')
+      expect.stringMatching('SUCCEEDED')
     )
     expect(errorMock).not.toHaveBeenCalled()
   })

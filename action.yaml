@@ -17,8 +17,6 @@ inputs:
 outputs:
   status:
     description: 'Status of the provisioned Product'
-  errors:
-    description: 'Error records that occurred during provisioning'
 
 runs:
   using: node20
