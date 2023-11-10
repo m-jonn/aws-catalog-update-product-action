@@ -20,7 +20,8 @@
                 "INPUT_PROVISIONED-PRODUCT-REGION": "eu-central-1",
                 "INPUT_PROVISIONED-PRODUCT-ID": "pp-gorzzxgtuhkrq",
                 "INPUT_PROVISIONED-PARAMETERS-JSON": ".nocommit/amg-g-90fb1d75b7.json",
-                "AWS_SHARED_CREDENTIALS_FILE": "/home/node/.aws/sessions"
+                "AWS_SHARED_CREDENTIALS_FILE": "/home/node/.aws/sessions",
+                "AWS_PROFILE": "github"
             }
         }
     ]
