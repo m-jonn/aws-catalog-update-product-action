@@ -1,0 +1,9 @@
+{
+	"name":"amg-on-uptimize-aws",
+	"image":"mcr.microsoft.com/devcontainers/typescript-node:20-bullseye",
+	"features": {
+		"ghcr.io/eitsupi/devcontainer-features/jq-likes:1": {},
+		"ghcr.io/jungaretti/features/make:1": {},
+		"ghcr.io/devcontainers/features/aws-cli:1": {}
+	}
+}
