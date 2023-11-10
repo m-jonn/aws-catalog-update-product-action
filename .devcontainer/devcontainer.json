@@ -1,5 +1,5 @@
 {
-	"name":"amg-on-uptimize-aws",
+	"name":"github-actions codespace",
 	"image":"mcr.microsoft.com/devcontainers/typescript-node:20-bullseye",
 	"features": {
 		"ghcr.io/eitsupi/devcontainer-features/jq-likes:1": {},
