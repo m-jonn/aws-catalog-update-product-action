@@ -63359,10 +63359,10 @@ class CatalogProvisionedProduct {
             core.debug(`aws --region ${this.region} servicecatalog describe-record --id ${recordId} `);
             const record = await this.client.send(new sdk.DescribeRecordCommand({ Id: recordId }));
             const status = record.RecordDetail?.Status ?? sdk.RecordStatus.IN_PROGRESS;
-            if (record.RecordDetail?.RecordErrors) {
+            if (record.RecordDetail?.RecordErrors && record.RecordDetail.RecordErrors.length > 0) {
                 let message = '';
                 for (const error of record.RecordDetail.RecordErrors) {
-                    message += `${error.Code} ${error.Description}\n`;
+                    message += `${error.Description}\n`;
                 }
                 if (status === sdk.RecordStatus.FAILED)
                     core.error(message);
@@ -63879,3 +63879,4 @@ const main_1 = __nccwpck_require__(70399);
 module.exports = __webpack_exports__;
 /******/ })()
 ;
+//# sourceMappingURL=index.js.map

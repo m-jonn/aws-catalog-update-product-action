@@ -131,10 +131,10 @@ export class CatalogProvisionedProduct {
       )
       const status = record.RecordDetail?.Status ?? sdk.RecordStatus.IN_PROGRESS
 
-      if (record.RecordDetail?.RecordErrors) {
+      if (record.RecordDetail?.RecordErrors && record.RecordDetail.RecordErrors.length > 0) {
         let message = ''
         for (const error of record.RecordDetail.RecordErrors) {
-          message += `${error.Code} ${error.Description}\n`
+          message += `${error.Description}\n`
         }
 
         if (status === sdk.RecordStatus.FAILED) core.error(message)
