@@ -1,13 +1,12 @@
 # Update Provisioned Products in AWS Service Catalog using Github Actions
 
-This Github Action is designed to automate parameter updates of Provisioned Products in AWS Service Catalog. 
+This Github Action is designed to automate parameter updates of Provisioned Products in AWS Service Catalog using GitOps for End Users. 
 It reads provisioning parameters from a "aws-provisioned-parameters.json" file committed to the Github Repository.
 
 ## Use Case
 
 The project was designed to provide Self-Service Layer for End Users of Provisioned Products in AWS Service Catalog.
-End Users should be able to adjust the parameters of their Provisioned Product without access to AWS Console.
-Instead End Users use Github Workflows to update parameters of their Provisioned Product:
+End Users without access to AWS Console are still able to update their Provisioned Product using Github Projects and Github Workflows:
 
 ![](docs/use-case.png)
 
