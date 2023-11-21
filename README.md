@@ -1,19 +1,17 @@
 # Update Provisioned Products in AWS Service Catalog using Github Actions
 
-This Github Action is designed to automate parameter updates of Provisioned Products in AWS Service Catalog using GitOps for End Users. 
-It reads provisioning parameters from a "aws-provisioned-parameters.json" file committed to the Github Repository.
+This Github Action is designed to automate parameter updates of Provisioned Products in AWS Service Catalog using GitOps for End Users
 
 ## Use Case
 
-The project was designed to provide Self-Service Layer for End Users of Provisioned Products in AWS Service Catalog.
-End Users without access to AWS Console are still able to update their Provisioned Product using Github Projects and Github Workflows:
+This Github Action provides a Self-Service Function for End Users of Provisioned Products which have no direct access to AWS Console.
+With this Github Action End Users are able to update their Provisioned Product using a "aws-provisioned-parameters.json" file committed to their Github Repository:
 
 ![](docs/use-case.png)
 
 ## Usage 
 
-When added to Github Workflows it uses a project local "aws-provisioned-parameters.json" file to define parameters of the provisioned product.
-
+When added to Github Workflows this Github Action reads an "aws-provisioned-parameters.json" file to parameterize the defined Provisioned Product on AWS Service Catalog.
 
 ``` yaml
 # .github/workflows/your-workflow.yaml
@@ -42,12 +40,12 @@ When added to Github Workflows it uses a project local "aws-provisioned-paramete
 ]
 ```
 
-which uses the official JSON Syntax for parameters of the ["update-provisioned-product"](https://awscli.amazonaws.com/v2/documentation/api/latest/reference/servicecatalog/update-provisioned-product.html) AWS CLI function, i.e. [{"Key": "string","Value":"string","UsePreviousValue": true|false}]. Note, all parameters which are not explicitly added to "aws-provisioned-parameters.json" will implicitly use "UsePreviousValue: true" and
+The "aws-provisioned-parameters.json" file uses the official JSON Syntax for the ["update-provisioned-product"](https://awscli.amazonaws.com/v2/documentation/api/latest/reference/servicecatalog/update-provisioned-product.html) AWS CLI function, i.e. [{"Key": "string","Value":"string","UsePreviousValue": true|false}]. Note, all parameters which are not explicitly added to the "aws-provisioned-parameters.json" file will implicitly use "UsePreviousValue: true" and
 thus will not change.
 
 ## AWS IAM Policy 
 
-The following AWS IAM Policy enables updates of AWS Service Catalog Products and need to be attached to the IAM Principal (IAM Role, IAM User) which is assumed by "aws-actions/configure-aws-credentials@v3":  
+The following AWS IAM Policy enables updates of AWS Service Catalog Products and need to be attached to the IAM Principal (IAM Role, IAM User) which is assumed by "aws-actions/configure-aws-credentials@v3":
 
 ``` json
 {
