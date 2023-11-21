@@ -22,8 +22,8 @@ When added to Github Workflows it uses a project local "aws-provisioned-paramete
   with:
     ...
 
-- name: Update Provisioned Products
-  uses: m-jonn/aws-servicecatalog-update-provisioned-product-action@v0.1.1
+- name: Update Provisioned Product on AWS Service Catalog
+  uses: m-jonn/aws-catalog-update-product-action@v0.1.1
   with:
     provisioned-product-region: "eu-central-1" # AWS Region code of the Provisioned Product in AWS Service Catalog
     provisioned-product-id: "pp-jgpsampleaq2lu" # The Id of the Provisioned Product in AWS Service Catalog
