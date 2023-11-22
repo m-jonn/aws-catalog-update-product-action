@@ -45,9 +45,9 @@ thus will not change.
 
 ## AWS Access 
 
-In order to update the Provisioned Product you need to grant the assumed IAM Principal (IAM Role, IAM User) 
-1. access to the AWS Service Catalog Portfolio (See https://docs.aws.amazon.com/servicecatalog/latest/adminguide/catalogs_portfolios_users.html)
-2. the following IAM access rights:
+In order to update the Provisioned Product you need to grant the assumed IAM Principal (IAM Role, IAM User) access to
+1. the AWS Service Catalog Portfolio (See https://docs.aws.amazon.com/servicecatalog/latest/adminguide/catalogs_portfolios_users.html)
+2. the following AWS Service Functions:
 
 ``` json
 {
