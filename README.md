@@ -43,7 +43,7 @@ When added to Github Workflows this Github Action reads an "aws-provisioned-para
 The "aws-provisioned-parameters.json" file uses the official JSON Syntax for the ["update-provisioned-product"](https://awscli.amazonaws.com/v2/documentation/api/latest/reference/servicecatalog/update-provisioned-product.html) AWS CLI function, i.e. [{"Key": "string","Value":"string","UsePreviousValue": true|false}]. Note, all parameters which are not explicitly added to the "aws-provisioned-parameters.json" file will implicitly use "UsePreviousValue: true" and
 thus will not change.
 
-## AWS IAM Policy and Portfolio Access 
+## AWS Access 
 
 In order to update the Provisioned Product you need to grant the assumed IAM Principal (IAM Role, IAM User) 
 1. access to the AWS Service Catalog Portfolio (See https://docs.aws.amazon.com/servicecatalog/latest/adminguide/catalogs_portfolios_users.html)
