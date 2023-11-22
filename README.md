@@ -93,7 +93,7 @@ In order to update the Provisioned Product you need to grant the assumed IAM Pri
               "cloudformation:ListStackSetOperationResults"
           ],
           "Resource": [
-              "arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/${AWS::StackName}/*"
+              "${YourCfnStackArn}/*"
           ]
       },
       {
@@ -102,7 +102,7 @@ In order to update the Provisioned Product you need to grant the assumed IAM Pri
           "Action": [
               "servicecatalog:DescribeProduct"
           ],
-          "Resource": "arn:aws:catalog:${AWS::Region}:${AWS::AccountId}:product/${ProductId}"
+          "Resource": "${YourCatalogProductArn}"
       },
       {
           "Sid": "required-by-multiple-service-catalog-functions",
@@ -119,3 +119,4 @@ In order to update the Provisioned Product you need to grant the assumed IAM Pri
   ]
 }
 ```
+where you have to replace ${YourCatalogProductArn} and ${YourCfnStackArn} with the Arn of your Product in Service Catalog (e.g. arn:aws:catalog:eu-central-1:111111111111:product/prod-sssssssssssss) and with the Arn of the CloudFormation Stack of the Provisioned Product (e.g. arn:aws:cloudformation:eu-central-1:111111111111:stack/SC-111111111111-pp-waaa06a06aaaa/a6aaaa06-0606-0606-a6a6-0606a060606a), respectively.
