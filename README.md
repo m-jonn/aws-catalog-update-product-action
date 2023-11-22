@@ -5,7 +5,7 @@ This Github Action is designed to automate parameter updates of Provisioned Prod
 ## Use Case
 
 This Github Action provides a Self-Service Function for End Users of Provisioned Products which have no direct access to AWS Console.
-End Users are able to update their Provisioned Product by committing changes to a "aws-provisioned-parameters.json" file in their Github Repository:
+Instead End Users are able to update their Provisioned Product by committing changes to a "aws-provisioned-parameters.json" file in their Github Repository:
 
 ![](docs/use-case.png)
 
