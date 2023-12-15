@@ -5,10 +5,11 @@ This Github Action is designed to automate parameter updates of Provisioned Prod
 ## Use Case
 
 This Github Action provides a Self-Service Function for End Users of Provisioned Products which have no direct access to AWS Console.
-Instead End Users are able to update their Provisioned Product by committing changes to a "aws-provisioned-parameters.json" file in their Github Repository:
-Note that this Github Action is usefull if you cannot give end users access to the Provisioned Product Resource in AWS Service Catalog, due to regulations or access restrictions. Otherwise, please use standard IaC Providers, such as [CloudFormation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-servicecatalog-cloudformationprovisionedproduct.html) or [Terraform](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/servicecatalog_provisioned_product).
+Instead End Users are able to update their Provisioned Product by committing changes to a "aws-provisioned-parameters.json" file in their Github Repository.
 
 ![](docs/use-case.png)
+
+Note that this Github Action is usefull if you cannot give end users access to the Provisioned Product Resource in AWS Service Catalog, due to regulations or access restrictions. Otherwise, please use standard IaC Providers, such as [CloudFormation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-servicecatalog-cloudformationprovisionedproduct.html) or [Terraform](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/servicecatalog_provisioned_product).
 
 ## Usage 
 
